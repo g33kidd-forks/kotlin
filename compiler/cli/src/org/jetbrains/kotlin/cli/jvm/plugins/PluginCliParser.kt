@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli.jvm.plugins
 
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.jvm.BundledCompilerPlugins
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import java.io.File
@@ -36,9 +35,10 @@ object PluginCliParser {
                 this::class.java.classLoader
         )
 
-        val componentRegistrars = ServiceLoader.load(ComponentRegistrar::class.java, classLoader).toMutableList()
-        componentRegistrars.addAll(BundledCompilerPlugins.componentRegistrars)
-        configuration.addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, componentRegistrars)
+        configuration.addAll(
+                ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS,
+                ServiceLoader.load(ComponentRegistrar::class.java, classLoader).toList()
+        )
 
         processPluginOptions(arguments, configuration, classLoader)
     }
@@ -53,8 +53,7 @@ object PluginCliParser {
             it.pluginId
         } ?: mapOf()
 
-        val commandLineProcessors = ServiceLoader.load(CommandLineProcessor::class.java, classLoader).toMutableList()
-        commandLineProcessors.addAll(BundledCompilerPlugins.commandLineProcessors)
+        val commandLineProcessors = ServiceLoader.load(CommandLineProcessor::class.java, classLoader).toList()
 
         for (processor in commandLineProcessors) {
             val declaredOptions = processor.pluginOptions.associateBy { it.name }
