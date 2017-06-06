@@ -51,8 +51,10 @@ class AndroidCommandLineProcessor : CommandLineProcessor {
     companion object {
         val ANDROID_COMPILER_PLUGIN_ID: String = "org.jetbrains.kotlin.android"
 
-        val VARIANT_OPTION: CliOption = CliOption("variant", "<name;path>", "Android build variant", allowMultipleOccurrences = true)
-        val PACKAGE_OPTION: CliOption = CliOption("package", "<fq name>", "Application package")
+        val VARIANT_OPTION: CliOption =
+                CliOption("variant", "<name;path>", "Android build variant", required = false, allowMultipleOccurrences = true)
+        val PACKAGE_OPTION: CliOption =
+                CliOption("package", "<fq name>", "Application package", required = false)
     }
 
     override val pluginId: String = ANDROID_COMPILER_PLUGIN_ID
