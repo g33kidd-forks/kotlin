@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.script.getScriptDefinition
 import org.jetbrains.kotlin.utils.sure
 
-fun PsiElement.getModuleInfo(): IdeaModuleInfo = this.getModuleInfo { reason ->
+fun PsiElement.getModuleInfo(): IdeaModuleInfo = this.getModuleInfo(NotUnderContentRootModuleInfo) { reason ->
     LOG.error("Could not find correct module information.\nReason: $reason")
     NotUnderContentRootModuleInfo
 }.sure { "Defaulting to NotUnderContentRootModuleInfo so null is not possible" }
@@ -46,7 +46,7 @@ fun PsiElement.getNullableModuleInfo(): IdeaModuleInfo? = this.getModuleInfo { r
     null
 }
 
-private fun PsiElement.getModuleInfo(onFailure: (String) -> IdeaModuleInfo?): IdeaModuleInfo? {
+private fun PsiElement.getModuleInfo(defaultInfo: IdeaModuleInfo? = null, onFailure: (String) -> IdeaModuleInfo?): IdeaModuleInfo? {
     (containingFile?.moduleInfo as? IdeaModuleInfo)?.let { return it }
 
     if (this is KtLightElement<*, *>) return this.getModuleInfoForLightElement(onFailure)
@@ -79,14 +79,14 @@ private fun PsiElement.getModuleInfo(onFailure: (String) -> IdeaModuleInfo?): Id
             project,
             virtualFile,
             treatAsLibrarySource = (containingFile as? KtFile)?.isCompiled ?: false
-    )
+    ) ?: defaultInfo
 }
 
 fun getModuleInfoByVirtualFile(
         project: Project, virtualFile: VirtualFile
-): IdeaModuleInfo = getModuleInfoByVirtualFile(project, virtualFile, treatAsLibrarySource = false)
+): IdeaModuleInfo? = getModuleInfoByVirtualFile(project, virtualFile, treatAsLibrarySource = false)
 
-private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFile, treatAsLibrarySource: Boolean): IdeaModuleInfo {
+private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFile, treatAsLibrarySource: Boolean): IdeaModuleInfo? {
     val projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)
 
     val module = projectFileIndex.getModuleForFile(virtualFile)
@@ -149,7 +149,7 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
         return ScriptDependenciesSourceModuleInfo(project)
     }
 
-    return NotUnderContentRootModuleInfo
+    return null
 }
 
 private fun KtLightElement<*, *>.getModuleInfoForLightElement(onFailure: (String) -> IdeaModuleInfo?): IdeaModuleInfo? {
