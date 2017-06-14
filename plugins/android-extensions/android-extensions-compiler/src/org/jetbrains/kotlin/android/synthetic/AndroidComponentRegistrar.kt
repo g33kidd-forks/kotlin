@@ -61,7 +61,7 @@ class AndroidCommandLineProcessor : CommandLineProcessor {
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
-            VARIANT_OPTION -> configuration.appendList(AndroidConfigurationKeys.VARIANT, value)
+            VARIANT_OPTION -> configuration.add(AndroidConfigurationKeys.VARIANT, value)
             PACKAGE_OPTION -> configuration.put(AndroidConfigurationKeys.PACKAGE, value)
             else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
         }

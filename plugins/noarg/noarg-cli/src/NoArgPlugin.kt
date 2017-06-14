@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.noarg
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.extensions.Extensions
-import org.jetbrains.kotlin.noarg.diagnostic.DefaultErrorMessagesNoArg
-import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
@@ -35,6 +33,7 @@ import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor.Companion.SUPPORTED_
 import org.jetbrains.kotlin.noarg.NoArgConfigurationKeys.ANNOTATION
 import org.jetbrains.kotlin.noarg.NoArgConfigurationKeys.PRESET
 import org.jetbrains.kotlin.noarg.diagnostic.CliNoArgDeclarationChecker
+import org.jetbrains.kotlin.noarg.diagnostic.DefaultErrorMessagesNoArg
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
@@ -62,8 +61,8 @@ class NoArgCommandLineProcessor : CommandLineProcessor {
     override val pluginOptions = listOf(ANNOTATION_OPTION, PRESET_OPTION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) = when (option) {
-        ANNOTATION_OPTION -> configuration.appendList(ANNOTATION, value)
-        PRESET_OPTION -> configuration.appendList(PRESET, value)
+        ANNOTATION_OPTION -> configuration.add(ANNOTATION, value)
+        PRESET_OPTION -> configuration.add(PRESET, value)
         else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
     }
 }

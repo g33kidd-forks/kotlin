@@ -19,7 +19,10 @@ package org.jetbrains.kotlin.annotation.processing
 import com.intellij.mock.MockProject
 import com.intellij.openapi.extensions.Extensions
 import org.jetbrains.kotlin.annotation.ClasspathBasedAnnotationProcessingExtension
+import org.jetbrains.kotlin.annotation.processing.AnnotationProcessingConfigurationKeys.ANNOTATION_PROCESSOR_CLASSPATH
+import org.jetbrains.kotlin.annotation.processing.AnnotationProcessingConfigurationKeys.APT_OPTIONS
 import org.jetbrains.kotlin.annotation.processing.diagnostic.DefaultErrorMessagesAnnotationProcessing
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.IS_KAPT2_ENABLED_KEY
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
@@ -34,10 +37,6 @@ import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.java.model.internal.JeElementRegistry
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import java.io.File
-
-import org.jetbrains.kotlin.annotation.processing.AnnotationProcessingConfigurationKeys.ANNOTATION_PROCESSOR_CLASSPATH
-import org.jetbrains.kotlin.annotation.processing.AnnotationProcessingConfigurationKeys.APT_OPTIONS
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 
 object AnnotationProcessingConfigurationKeys {
     val GENERATED_OUTPUT_DIR: CompilerConfigurationKey<String> =
@@ -92,8 +91,8 @@ class AnnotationProcessingCommandLineProcessor : CommandLineProcessor {
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
-            ANNOTATION_PROCESSOR_CLASSPATH_OPTION -> configuration.appendList(ANNOTATION_PROCESSOR_CLASSPATH, value)
-            APT_OPTIONS_OPTION -> configuration.appendList(APT_OPTIONS, value)
+            ANNOTATION_PROCESSOR_CLASSPATH_OPTION -> configuration.add(ANNOTATION_PROCESSOR_CLASSPATH, value)
+            APT_OPTIONS_OPTION -> configuration.add(APT_OPTIONS, value)
             GENERATED_OUTPUT_DIR_OPTION -> configuration.put(AnnotationProcessingConfigurationKeys.GENERATED_OUTPUT_DIR, value)
             CLASS_FILES_OUTPUT_DIR_OPTION -> configuration.put(AnnotationProcessingConfigurationKeys.CLASS_FILES_OUTPUT_DIR, value)
             INCREMENTAL_DATA_FILE_OPTION -> configuration.put(AnnotationProcessingConfigurationKeys.INCREMENTAL_DATA_FILE, value)

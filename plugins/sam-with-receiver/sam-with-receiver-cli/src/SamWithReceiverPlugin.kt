@@ -47,7 +47,7 @@ class SamWithReceiverCommandLineProcessor : CommandLineProcessor {
     override val pluginOptions = listOf(ANNOTATION_OPTION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) = when (option) {
-        ANNOTATION_OPTION -> configuration.appendList(ANNOTATION, value)
+        ANNOTATION_OPTION -> configuration.add(ANNOTATION, value)
         else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
     }
 }
